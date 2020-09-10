@@ -86,3 +86,4 @@ print(range(10))
 # range(1,11) 시작숫자, 끝숫자 / 이 때 끝 숫자 포함 안됨
 for i in range(1,11):
     print(i)
+
