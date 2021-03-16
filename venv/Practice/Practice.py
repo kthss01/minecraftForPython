@@ -63,7 +63,7 @@ print(pos)
 # mc.setBlocks(x + 1, y + 1, z + 1, x + 11, y + 11, z + 11, tnt, 1)
 
 # 흐르는 용암 가지고 ㅗㄹ기
-x, y, z = mc.player.getPos()
-lava = 10
-mc.setBlock(x + 3, y + 3, z, lava) # 이 블록에서 용암이 흐르기 시작함
+# x, y, z = mc.player.getPos()
+# lava = 10
+# mc.setBlock(x + 3, y + 3, z, lava) # 이 블록에서 용암이 흐르기 시작함
 # 용암은 식으면 돌이 됨
