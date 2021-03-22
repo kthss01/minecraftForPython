@@ -30,8 +30,8 @@ def input_model_url():
 # pyautogui 사용
 def input_file_name(model_url):
     name = pg.prompt(
-        text= '저장될 파일 이름을 입력하세요'
-              '(확장자명 없이) ex) tiny-house',
+        text='저장될 파일 이름을 입력하세요'
+             '(확장자명 없이) ex) tiny-house',
         title='블루프린트 작성 완료',
         default=model_url)
 
@@ -59,13 +59,16 @@ def blueprint_scraping():
 
     # js -> python 후 데이터 가공
     blueprint = blueprint_js_to_py(js_url)
+    # print(blueprint)
+    # print(blueprint.keys())
 
     # default 파일 이름 url로부터 슬라이싱
-    init_filename = url[url.find("minecraft/")+len("minecraft/"):-len("#blueprints")]
+    init_filename = url[url.find("minecraft/") + len("minecraft/"):-len("#blueprints")]
 
     # 파일로 저장
     # cancel을 누르지 않으면 실행 누르면 None 반환
-    if input_file_name(init_filename) != None:
+    filename = input_file_name(init_filename)
+    if filename != None:
         write_blueprint(blueprint, filename)
 
 
@@ -78,18 +81,29 @@ def blueprint_js_to_py(js_url):
     # 자바스크립트 코드를 파이썬 코드로 전환
     layer_map = js2py.eval_js(js_code)
     # print(layer_map)
+    # print(type(layer_map))
 
     # for layer in layer_map:
     #     print(layer)
 
     blueprint = {}
 
+    # print(layer_map['1'][0]['y'])
+
+    offsetX = 5
+    offsetY = layer_map['1'][0]['y']  # 가장 처음의 작은 top을 기준
+
+    for key in layer_map:
+        for layer in layer_map[key]:
+            # print(layer)
+            offsetY = min(offsetY, layer['y'])
+
     # list내에 dictionary 정렬
     for key in layer_map:
-        # print(key)
+        # print(type(key))
         layer = sorted(layer_map[key], key=itemgetter('x', 'y'))
 
-        layer = change_offset(layer)
+        layer = change_offset(layer, offsetX, offsetY)
 
         # print(type(layer))
         # print(layer)
@@ -105,10 +119,7 @@ def blueprint_js_to_py(js_url):
 
 # offsetX, offsetY 조정하는 함수
 # left, top 기준 0,0으로 offset 조정
-def change_offset(layer):
-    offsetX = 5
-    offsetY = layer[0]['y']  # 가장 처음의 작은 top을 기준
-
+def change_offset(layer, offsetX, offsetY):
     for key in range(len(layer)):
         # print(layer[key])
 
@@ -129,11 +140,13 @@ def write_blueprint(blueprints, filename):
     #         print("{}\t{}\t{}\t{}".format(width, height, depth, block))# for key in blueprints.keys():
 
     with open('{}.txt'.format(filename), 'w') as f:
-        for key in blueprints.keys():
-            for blueprint in blueprints[key]:
+        keylist = sorted(map(int, blueprints.keys()))
+        # print(keylist)
+        for key in keylist:
+            for blueprint in blueprints[str(key)]:
                 width = blueprint['x']
                 height = blueprint['y']
-                depth = int(key) - 1  # 계산 편하게 하기 위해 1층을 0으로
+                depth = key - 1  # 계산 편하게 하기 위해 1층을 0으로
                 block = blueprint['h']
                 f.write("{}\t{}\t{}\t{}\n".format(width, height, depth, block))
 
