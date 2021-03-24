@@ -32,10 +32,90 @@ def input_file_name(model_url):
     name = pg.prompt(
         text='저장될 파일 이름을 입력하세요'
              '(확장자명 없이) ex) tiny-house',
-        title='블루프린트 작성 완료',
+        title='블루프린트 작성 시작',
         default=model_url)
 
     return name
+
+
+# javascript 코드로된 blueprint를 python 코드로 전환 하는 함수
+# js2py 사용
+def blueprint_js_to_py(js_url):
+    js_code = requests.get(js_url).text
+
+    # 자바스크립트 코드를 파이썬 코드로 전환
+    layer_map = js2py.eval_js(js_code)
+    # print(layer_map)
+    # print(type(layer_map))
+
+    # for layer in layer_map:
+    #     print(layer)
+
+    return layer_map.to_dict()  # python dict 자료형으로 반환
+
+
+# offsetY 구하는 함수
+def find_offsetY(layer_map):
+    ####### 가장 작은 offsetY 구하는데 오랜 시간이 걸림 해결방안 필요
+    offsetY = layer_map['1'][0]['y']  # 가장 처음 top을 기준으로 잡고 시작
+
+    for key in layer_map:
+        for layer in layer_map[key]:
+            # print(layer)
+            offsetY = min(offsetY, layer['y'])
+
+    return offsetY
+
+
+# blueprint로 가공하여 파일로 저장
+def make_blueprint(init_filename, layer_map):
+    path = "./scraping/blueprints/"
+    # 테스트를 위해 현재 위치에
+    path = "./"
+
+    filename = input_file_name(init_filename)
+    # cancel을 누르면 None 반환
+    if filename == None:
+        # 파일 저장 취소
+        return
+
+    # 파일 저장
+    f = open(path + '{}.txt'.format(filename), 'w')
+
+    # 데이터 위치 가공
+    # offset 구하기
+    offsetX = 5
+    offsetY = find_offsetY(layer_map)
+    # print(offsetY)
+
+    # print(layer_map)
+    # print(type(layer_map))
+
+    # dict의 key 값 정렬하여 list로 반환
+    keylist = sorted(map(int, layer_map.keys()))
+    keylist = map(str, keylist)  # 다시 문자열로 변환
+    # print(keylist)
+    for key in keylist:
+        # 각 층별 list내의 block 정보 (dict) - x, y에 대하여 dict 정렬
+        layer = sorted(layer_map[key], key=itemgetter('x', 'y'))
+
+        # 각 block 가공
+        for block in layer:
+            # print(block)
+            # block 위치 가공
+            # offset의 맞게 x, y 값 변경
+            width = (block['x'] - offsetX) // 20  # 경도 (longitude), 동(+), 서(-)
+            depth = int(key) - 1  # 계산 편하게 하기 위해 1층을 0으로     # 표고 (elevation) 높낮이(0~255, 64 해수면)
+            height = (block['y'] - offsetY) // 20  # 위도 (latitude), 남(+), 북(-)
+
+            # block 정보 id와 data로 가공
+            block_str = block['h']
+            block_id = 0
+            block_data = 0
+
+            f.write("{}\t{}\t{}\t{}\t{}\n".format(width, depth, height, block_id, block_data))
+
+    f.close()
 
 
 # 블루프린트 스크래핑을 위한 함수
@@ -57,99 +137,15 @@ def blueprint_scraping():
     js_url = soup.select('div.tab-content.blueprints script')[1]['src']
     # print(js_script)
 
-    # js -> python 후 데이터 가공
-    blueprint = blueprint_js_to_py(js_url)
-    # print(blueprint)
-    # print(blueprint.keys())
+    # js -> python 코드로 변경
+    layer_map = blueprint_js_to_py(js_url)
 
+    # 파일 저장 준비
     # default 파일 이름 url로부터 슬라이싱
     init_filename = url[url.find("minecraft/") + len("minecraft/"):-len("#blueprints")]
 
-    # 파일로 저장
-    # cancel을 누르지 않으면 실행 누르면 None 반환
-    filename = input_file_name(init_filename)
-    if filename != None:
-        write_blueprint(blueprint, filename)
-
-
-# javascript 코드로된 blueprint를 python 코드로 전환 후
-# 원하는 형태의 데이터로 가공하여 반환하는 함수
-# 각 층별(layer별) 오름차순으로 정렬
-def blueprint_js_to_py(js_url):
-    js_code = requests.get(js_url).text
-
-    # 자바스크립트 코드를 파이썬 코드로 전환
-    layer_map = js2py.eval_js(js_code)
-    # print(layer_map)
-    # print(type(layer_map))
-
-    # for layer in layer_map:
-    #     print(layer)
-
-    blueprint = {}
-
-    # print(layer_map['1'][0]['y'])
-
-    offsetX = 5
-    offsetY = layer_map['1'][0]['y']  # 가장 처음의 작은 top을 기준
-
-    for key in layer_map:
-        for layer in layer_map[key]:
-            # print(layer)
-            offsetY = min(offsetY, layer['y'])
-
-    # list내에 dictionary 정렬
-    for key in layer_map:
-        # print(type(key))
-        layer = sorted(layer_map[key], key=itemgetter('x', 'y'))
-
-        layer = change_offset(layer, offsetX, offsetY)
-
-        # print(type(layer))
-        # print(layer)
-
-        blueprint[key] = layer
-
-    # print(blueprint)
-    # print(blueprint.keys())  # 각 layer 층 의미
-    # print(blueprint['1'])
-
-    return blueprint
-
-
-# offsetX, offsetY 조정하는 함수
-# left, top 기준 0,0으로 offset 조정
-def change_offset(layer, offsetX, offsetY):
-    for key in range(len(layer)):
-        # print(layer[key])
-
-        layer[key]['x'] = (layer[key]['x'] - offsetX) // 20
-        layer[key]['y'] = (layer[key]['y'] - offsetY) // 20
-
-    return layer
-
-
-# 파일 쓰기 .txt로 저장
-def write_blueprint(blueprints, filename):
-    # for key in blueprints.keys():
-    #     for blueprint in blueprints[key]:
-    #         width = blueprint['x']
-    #         height = blueprint['y']
-    #         depth = int(key) - 1  # 계산 편하게 하기 위해 1층을 0으로
-    #         block = blueprint['h']
-    #         print("{}\t{}\t{}\t{}".format(width, height, depth, block))# for key in blueprints.keys():
-
-    path = "./scraping/blueprints/"
-    with open(path + '{}.txt'.format(filename), 'w') as f:
-        keylist = sorted(map(int, blueprints.keys()))
-        # print(keylist)
-        for key in keylist:
-            for blueprint in blueprints[str(key)]:
-                width = blueprint['x']
-                height = blueprint['y']
-                depth = key - 1  # 계산 편하게 하기 위해 1층을 0으로
-                block = blueprint['h']
-                f.write("{}\t{}\t{}\t{}\n".format(width, height, depth, block))
+    # 데이터 가공하여 저장
+    make_blueprint(init_filename, layer_map)
 
 
 # 이 파이썬 파일로 실행시 실행 되는 부분
