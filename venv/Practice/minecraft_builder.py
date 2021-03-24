@@ -67,7 +67,7 @@ class MinecraftBuilder:
             datas = f.readlines()
 
             for data in datas:
-                x, z, y, block = data.split('\t')
+                x, y, z, block = data.split('\t')
                 # print(f"{x} {y} {z} {block}")
                 self.blueprint_data.append(
                     {"x": int(x), "y": int(y), "z": int(z), "block": block})
