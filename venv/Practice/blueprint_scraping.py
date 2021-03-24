@@ -139,7 +139,8 @@ def write_blueprint(blueprints, filename):
     #         block = blueprint['h']
     #         print("{}\t{}\t{}\t{}".format(width, height, depth, block))# for key in blueprints.keys():
 
-    with open('{}.txt'.format(filename), 'w') as f:
+    path = "./scraping/blueprints/"
+    with open(path + '{}.txt'.format(filename), 'w') as f:
         keylist = sorted(map(int, blueprints.keys()))
         # print(keylist)
         for key in keylist:
