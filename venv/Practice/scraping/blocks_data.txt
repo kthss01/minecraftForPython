@@ -1,0 +1,112 @@
+WOOL	White	0
+WOOL	Orange	1
+WOOL	Magenta	2
+WOOL	Light Blue	3
+WOOL	Yellow	4
+WOOL	Lime	5
+WOOL	Pink	6
+WOOL	Grey	7
+WOOL	Light grey	8
+WOOL	Cyan	9
+WOOL	Purple	10
+WOOL	Blue	11
+WOOL	Brown	12
+WOOL	Green	13
+WOOL	Red	14
+WOOL	Black	15
+WOOD	Oak (up/down)	0
+WOOD	Spruce (up/down)	1
+WOOD	Birch (up/down)	2
+WOOD	Jungle (up/down)	3
+WOOD	Oak (east/west)	4
+WOOD	Spruce (east/west)	5
+WOOD	Birch (east/west)	6
+WOOD	Jungle (east/west)	7
+WOOD	Oak (north/south)	8
+WOOD	Spruce (north/south)	9
+WOOD	Birch (north/south)	10
+WOOD	Jungle (north/south)	11
+WOOD	Oak (only bark)	12
+WOOD	Spruce (only bark)	13
+WOOD	Birch (only bark)	14
+WOOD	Jungle (only bark)	15
+WOOD_PLANKS	Oak	0
+WOOD_PLANKS	Spruce	1
+WOOD_PLANKS	Birch	2
+WOOD_PLANKS	Jungle	3
+SAPLING	Oak	0
+SAPLING	Spruce	1
+SAPLING	Birch	2
+SAPLING	Jungle	3
+GRASS_TALL	Shrub	0
+GRASS_TALL	Grass	1
+GRASS_TALL	Fern	2
+GRASS_TALL	Grass (color affected by biome)	3
+TORCH	Pointing east	1
+TORCH	Pointing west	2
+TORCH	Pointing south	3
+TORCH	Pointing north	4
+TORCH	Facing up	5
+STONE_BRICK	Stone brick	0
+STONE_BRICK	Mossy stone brick	1
+STONE_BRICK	Cracked stone brick	2
+STONE_BRICK	Chiseled stone brick	3
+STONE_SLAB	Stone	0
+STONE_SLAB	Sandstone	1
+STONE_SLAB	Wooden	2
+STONE_SLAB	Cobblestone	3
+STONE_SLAB	Brick	4
+STONE_SLAB	Stone Brick	5
+STONE_SLAB	Nether Brick	6
+STONE_SLAB	Quartz	7
+STONE_SLAB_DOUBLE	Stone	0
+STONE_SLAB_DOUBLE	Sandstone	1
+STONE_SLAB_DOUBLE	Wooden	2
+STONE_SLAB_DOUBLE	Cobblestone	3
+STONE_SLAB_DOUBLE	Brick	4
+STONE_SLAB_DOUBLE	Stone Brick	5
+STONE_SLAB_DOUBLE	Nether Brick	6
+STONE_SLAB_DOUBLE	Quartz	7
+TNT	Inactive	0
+TNT	Ready to explode	1
+LEAVES	Oak leaves	1
+LEAVES	Spruce leaves	2
+LEAVES	Birch leaves	3
+SANDSTONE	Sandstone	0
+SANDSTONE	Chiseled sandstone	1
+SANDSTONE	Smooth sandstone	2
+STAIRS_COBBLESTONE	Ascending east	0
+STAIRS_COBBLESTONE	Ascending west	1
+STAIRS_COBBLESTONE	Ascending south	2
+STAIRS_COBBLESTONE	Ascending north	3
+STAIRS_COBBLESTONE	Ascending east (upside down)	4
+STAIRS_COBBLESTONE	Ascending west (upside down)	5
+STAIRS_COBBLESTONE	Ascending south (upside down)	6
+STAIRS_COBBLESTONE	Ascending north (upside down)	7
+STAIRS_WOOD	Ascending east	0
+STAIRS_WOOD	Ascending west	1
+STAIRS_WOOD	Ascending south	2
+STAIRS_WOOD	Ascending north	3
+STAIRS_WOOD	Ascending east (upside down)	4
+STAIRS_WOOD	Ascending west (upside down)	5
+STAIRS_WOOD	Ascending south (upside down)	6
+STAIRS_WOOD	Ascending north (upside down)	7
+LADDERS	Facing north	2
+LADDERS	Facing south	3
+LADDERS	Facing west	4
+LADDERS	Facing east	5
+CHESTS	Facing north	2
+CHESTS	Facing south	3
+CHESTS	Facing west	4
+CHESTS	Facing east	5
+FURNACES	Facing north	2
+FURNACES	Facing south	3
+FURNACES	Facing west	4
+FURNACES	Facing east	5
+FENCE_GATE	Facing north	2
+FENCE_GATE	Facing south	3
+FENCE_GATE	Facing west	4
+FENCE_GATE	Facing east	5
+NETHER_REACTOR_CORE	Unused	0
+NETHER_REACTOR_CORE	Active	1
+NETHER_REACTOR_CORE	Stopped / used up	2

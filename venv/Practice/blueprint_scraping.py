@@ -67,6 +67,14 @@ def find_offsetY(layer_map):
     return offsetY
 
 
+# 문자열로 된 block 정보를 id와 data 값으로 바꿔주는 함수
+def find_block(block_str):
+    block_id = 0
+    block_data = 0
+
+    return block_id, block_data
+
+
 # blueprint로 가공하여 파일로 저장
 def make_blueprint(init_filename, layer_map):
     path = "./scraping/blueprints/"
@@ -109,9 +117,10 @@ def make_blueprint(init_filename, layer_map):
             height = (block['y'] - offsetY) // 20  # 위도 (latitude), 남(+), 북(-)
 
             # block 정보 id와 data로 가공
-            block_str = block['h']
-            block_id = 0
-            block_data = 0
+            # block_str = block['h']
+            # block_id = 0
+            # block_data = 0
+            block_id, block_data = find_block(block['h'])
 
             f.write("{}\t{}\t{}\t{}\t{}\n".format(width, depth, height, block_id, block_data))
 
