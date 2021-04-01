@@ -9,7 +9,7 @@ import js2py
 import pyautogui as pg
 from bs4 import BeautifulSoup
 from operator import itemgetter
-
+from difflib import get_close_matches
 
 # 메세지 박스로 url주소 입력 받기 위한 함수
 # pyautogui 사용
@@ -66,26 +66,91 @@ def find_offsetY(layer_map):
 
     return offsetY
 
+# block data가 있는 block의 경우 가장 비슷한 block data를 찾는 함수
+def find_similar_block_data(block, block_datas):
+    cutoff = 0.3  # 정확도
 
-# 문자열로 된 block 정보를 id와 data 값으로 바꿔주는 함수
-def find_block(block_str):
-    block_id = 0
-    block_data = 0
+    result = get_close_matches(block, block_datas.keys(), cutoff=cutoff)
 
-    return block_id, block_data
+    block_data = ""
 
+    if not result:  # 빈 리스트인 경우 false
+        return 0  # 기본값
+    else:
+        block_data = result[0]  # 가장 정답에 가까운 값 설정
+
+    return block_datas[block_data]
+
+# 문자열로 된 block 정보를 가장 비슷한 block id와 data로 바꿔주는 함수
+def find_similar_block(block, block_id_info, block_data_info):
+    block_upper = block.upper()
+
+    cutoff = 0.3  # 정확도
+
+    result = get_close_matches(block_upper, block_id_info.keys(), cutoff=cutoff)
+
+    if not result:  # 빈 리스트인 경우 false
+        print("\t\t\t{} not found ".format(block))
+        block_id = 'DIRT'  # 대체 블락 우선은 DIRT로 설정
+    else:
+        block_id = result[0]  # 가장 정답에 가까운 값 설정
+
+    block_data = 0  # 기본값
+
+    if block_id in block_data_info:
+        block_data = find_similar_block_data(block_upper, block_data_info[block_id])
+
+    return block_id_info[block_id], block_data
+
+# 블락 data 정보 읽어오기
+def read_block_data_info():
+    block_data_info = {}
+
+    with open('./scraping/blocks_data.txt', 'r') as f:
+
+        for line in f.readlines():
+            datas = line.split('\t')
+
+            block_id = datas[0]
+            block_data = datas[1].upper()
+            block_data_num = datas[2].strip()
+
+            if block_id not in block_data_info.keys():
+                block_data_info[block_id] = {block_data : block_data_num}
+            else:
+                block_data_info[block_id][block_data] = block_data_num
+
+    return block_data_info
+
+# 블락 id 정보 읽어오기
+def read_block_id_info():
+    block_id_info = {}
+
+    with open('./scraping/blocks_id.txt', 'r') as f:
+
+        for line in f.readlines():
+            block, id = line.split('\t')
+            block_id_info[block] = id.strip()
+
+    # print(block_id_info)
+
+    return block_id_info
 
 # blueprint로 가공하여 파일로 저장
 def make_blueprint(init_filename, layer_map):
     path = "./scraping/blueprints/"
-    # 테스트를 위해 현재 위치에
-    path = "./"
+    # # 테스트를 위해 현재 위치에
+    # path = "./"
 
     filename = input_file_name(init_filename)
     # cancel을 누르면 None 반환
     if filename == None:
         # 파일 저장 취소
         return
+
+    # 블락 id와 data에 관한 정보 읽어오기
+    block_id_info = read_block_id_info()
+    block_data_info = read_block_data_info()
 
     # 파일 저장
     f = open(path + '{}.txt'.format(filename), 'w')
@@ -120,7 +185,7 @@ def make_blueprint(init_filename, layer_map):
             # block_str = block['h']
             # block_id = 0
             # block_data = 0
-            block_id, block_data = find_block(block['h'])
+            block_id, block_data = find_similar_block(block['h'], block_id_info, block_data_info)
 
             f.write("{}\t{}\t{}\t{}\t{}\n".format(width, depth, height, block_id, block_data))
 

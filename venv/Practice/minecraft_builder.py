@@ -56,7 +56,8 @@ class MinecraftBuilder:
 
         for data in self.blueprint_data:
             # print(data)
-            self.set_block(data['x'], data['y'], data['z'])
+            self.set_block(data['x'], data['y'], data['z'],
+                           data['block_id'], data['block_data'])
 
     def _readBlueprint(self):
         f = open(self.blueprint, 'r')
@@ -67,10 +68,11 @@ class MinecraftBuilder:
             datas = f.readlines()
 
             for data in datas:
-                x, y, z, block = data.split('\t')
+                x, y, z, block_id, block_data = data.split('\t')
                 # print(f"{x} {y} {z} {block}")
                 self.blueprint_data.append(
-                    {"x": int(x), "y": int(y), "z": int(z), "block": block})
+                    {"x": int(x), "y": int(y), "z": int(z),
+                        "block_id": int(block_id), "block_data": int(block_data)})
 
         except FileNotFoundError as e:
             print(e)
@@ -93,9 +95,10 @@ if __name__=="__main__":
 
     # 예제 blueprint
     # filename = "tiny-house.txt"
-    filename = "deposit-rail-crane.txt"
+    # filename = "deposit-rail-crane.txt"
     # filename = "Deposit Rail Crane.txt"
     # filename = "Tiny House.txt"
+    filename = "medieval-kingdom-apple-farm.txt"
 
     # 대형 blueprint test
     # filename = "plantation-mansion.txt"
