@@ -8,10 +8,10 @@ from mcpi import minecraft
 from mcpi import block
 import time
 import math
+import pyautogui as pg
 
 
 class MinecraftBuilder:
-    SPEEDTIMES = {0: 0, 100:0.01, 10: 0.1, 9: 0.2, 8: 0.3, 7: 0.4, 6: 0.5, 5: 0.6, 4: 0.7, 3: 0.8, 2: 0.9, 1: 1}
 
     def __init__(self, mc, position=minecraft.Vec3(0, 0, 0), blueprint=""):
         # set defaults
@@ -27,7 +27,7 @@ class MinecraftBuilder:
         self.blueprint = blueprint
 
         # set speed
-        self.builderspeed = 10
+        self.builderspeed = 0.1
 
     def set_block(self, x, y, z, block_id = block.DIRT.id, block_data=0):
 
@@ -39,7 +39,7 @@ class MinecraftBuilder:
         # print(self.position)
 
         # wait
-        time.sleep(self.SPEEDTIMES[self.builderspeed])
+        time.sleep(self.builderspeed)
 
         self._drawBuilder(self.position.x, self.position.y, self.position.z, block_id, block_data)
 
@@ -87,6 +87,31 @@ class MinecraftBuilder:
         self.mc.setBlock(x, y, z, block_id, block_data)
 
 
+def input_filename():
+    filename = pg.prompt(
+        text='읽어올 blueprint 파일명을 입력하세요'
+             'ex) tiny-house.txt',
+        title='마인크래프트 블루프린트 빌더',
+        default='tiny-house.txt'
+    )
+
+    return filename
+
+
+def input_build_speed():
+    speed = pg.prompt(
+        text='빌드 속도를 설정하세요'
+             'ex) 0.1 (기본값 일반 모델용) 0.01 (대형 모델용 추천)',
+        title='마인크래프트 블루프린터 빌드 속도 설정',
+        default='0.1'
+    )
+
+    if speed == None:
+        speed = 0.1
+
+    return speed
+
+
 if __name__=="__main__":
     mc = minecraft.Minecraft.create()
     pos = mc.player.getPos() + minecraft.Vec3(1, 1, 1)
@@ -98,15 +123,22 @@ if __name__=="__main__":
     # filename = "deposit-rail-crane.txt"
     # filename = "Deposit Rail Crane.txt"
     # filename = "Tiny House.txt"
-    filename = "medieval-kingdom-apple-farm.txt"
+    # filename = "medieval-kingdom-apple-farm.txt"
+
 
     # 대형 blueprint test
     # filename = "plantation-mansion.txt"
     # builder.set_speed(100)
 
-    path = "./scraping/blueprints/"
-    blueprint = path + filename
+    filename = input_filename()
+    if filename != None:
 
-    builder.set_blueprint(blueprint)
+        speed = input_build_speed()
+        builder.set_speed(float(speed))
 
-    builder.build()
+        path = "./scraping/blueprints/"
+        blueprint = path + filename
+
+        builder.set_blueprint(blueprint)
+
+        builder.build()
